@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Manrope, Instrument_Serif, JetBrains_Mono } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import { site } from "@/data/site";
 import AppProviders from "@/components/providers/app-providers";
 import CustomCursor from "@/components/cursor/custom-cursor";
@@ -163,6 +164,7 @@ export default function RootLayout({
           <EasterEggs />
         </AppProviders>
         <CustomCursor />
+        <Analytics />
       </body>
     </html>
   );
