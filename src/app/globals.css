@@ -1,0 +1,335 @@
+@import "tailwindcss";
+
+/* ---------------------------------- */
+/* Design tokens                      */
+/* ---------------------------------- */
+
+/* Runtime theme variables — dark is the default; [data-theme="light"] flips
+   them. Utilities resolve var() at usage site (@theme inline), so swapping the
+   attribute retunes the whole page. `.plate-dark` re-pins a subtree to dark. */
+:root {
+  --t-bg: #0a0a0a;
+  --t-surface: #111111;
+  --t-surface-2: #161616;
+  --t-ink: #f4f1ea;
+  --t-muted: #8c8c8c;
+  --t-faint: #5a5a5a;
+  --t-line: rgba(255, 255, 255, 0.1);
+  --t-line-soft: rgba(255, 255, 255, 0.06);
+  --t-accent: #d7ff3f;
+  --t-accent-fill: #d7ff3f;
+  --t-grid: rgba(255, 255, 255, 0.028);
+  --t-scrollbar: rgba(255, 255, 255, 0.14);
+  --t-stroke-outline: rgba(244, 241, 234, 0.22);
+  --t-cursor-ring: rgba(244, 241, 234, 0.6);
+  --t-cursor-dot: #f4f1ea;
+  --t-cursor-blend: difference;
+}
+
+html[data-theme="light"] {
+  --t-bg: #f4f1ea;
+  --t-surface: #ece8df;
+  --t-surface-2: #e5e0d5;
+  --t-ink: #141310;
+  --t-muted: #6a675f;
+  --t-faint: #9a958a;
+  --t-line: rgba(0, 0, 0, 0.14);
+  --t-line-soft: rgba(0, 0, 0, 0.07);
+  --t-accent: #5f7800;
+  --t-accent-fill: #d7ff3f;
+  --t-grid: rgba(0, 0, 0, 0.045);
+  --t-scrollbar: rgba(0, 0, 0, 0.2);
+  --t-stroke-outline: rgba(20, 19, 16, 0.25);
+  --t-cursor-ring: rgba(20, 19, 16, 0.55);
+  /* Solid black cursor on paper — no blend inversion in light mode. */
+  --t-cursor-dot: #000000;
+  --t-cursor-blend: normal;
+  color-scheme: light;
+}
+
+/* Pins a subtree to the dark palette regardless of theme — used for
+   generative "plates" (project visuals, lab screens) that read as figures. */
+.plate-dark {
+  --t-bg: #0a0a0a;
+  --t-surface: #111111;
+  --t-surface-2: #161616;
+  --t-ink: #f4f1ea;
+  --t-muted: #8c8c8c;
+  --t-faint: #5a5a5a;
+  --t-line: rgba(255, 255, 255, 0.1);
+  --t-line-soft: rgba(255, 255, 255, 0.06);
+  --t-accent: #d7ff3f;
+  --t-accent-fill: #d7ff3f;
+  --t-stroke-outline: rgba(244, 241, 234, 0.22);
+}
+
+@theme inline {
+  --color-bg: var(--t-bg);
+  --color-surface: var(--t-surface);
+  --color-surface-2: var(--t-surface-2);
+  --color-ink: var(--t-ink);
+  --color-muted: var(--t-muted);
+  --color-faint: var(--t-faint);
+  --color-line: var(--t-line);
+  --color-line-soft: var(--t-line-soft);
+  --color-accent: var(--t-accent);
+  --color-accent-fill: var(--t-accent-fill);
+
+  --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-instrument), Georgia, "Times New Roman", serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, "SF Mono", Menlo, monospace;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-soft: cubic-bezier(0.65, 0, 0.35, 1);
+
+  --animate-marquee: marquee 36s linear infinite;
+  --animate-pulse-dot: pulse-dot 2.4s ease-in-out infinite;
+
+  @keyframes marquee {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  @keyframes pulse-dot {
+    0%,
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.35;
+      transform: scale(0.8);
+    }
+  }
+}
+
+/* ---------------------------------- */
+/* Base                               */
+/* ---------------------------------- */
+
+@layer base {
+  html {
+    scroll-behavior: auto;
+    color-scheme: dark;
+  }
+
+  body {
+    background-color: var(--color-bg);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: clip;
+    min-height: 100svh;
+  }
+
+  ::selection {
+    background: var(--t-accent-fill);
+    color: #0a0a0a;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+}
+
+/* Chrome/Safari WebKit autofill override */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--t-ink);
+  -webkit-box-shadow: 0 0 0px 1000px var(--t-bg) inset;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Subtle scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--t-scrollbar) transparent;
+}
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--t-scrollbar);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* ---------------------------------- */
+/* Background system: faint grid + grain */
+/* ---------------------------------- */
+
+.site-grid {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: linear-gradient(to right, var(--t-grid) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--t-grid) 1px, transparent 1px);
+  background-size: 88px 88px;
+}
+
+.site-grain {
+  position: fixed;
+  inset: -50%;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.045;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.72' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 256px 256px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .site-grain {
+    animation: grain-shift 9s steps(6) infinite;
+  }
+}
+
+@keyframes grain-shift {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  20% {
+    transform: translate(-2%, 2%);
+  }
+  40% {
+    transform: translate(2%, -1%);
+  }
+  60% {
+    transform: translate(-1%, -2%);
+  }
+  80% {
+    transform: translate(1%, 2%);
+  }
+}
+
+/* ---------------------------------- */
+/* Custom cursor                      */
+/* ---------------------------------- */
+
+@media (pointer: fine) {
+  html[data-custom-cursor="true"],
+  html[data-custom-cursor="true"] * {
+    cursor: none;
+  }
+}
+
+/* ---------------------------------- */
+/* Typography helpers                 */
+/* ---------------------------------- */
+
+.text-meta {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem; /* 11px */
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  line-height: 1.5;
+}
+
+.text-meta-sm {
+  font-family: var(--font-mono);
+  font-size: 0.625rem; /* 10px */
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  line-height: 1.5;
+}
+
+.text-stroke {
+  color: transparent;
+  -webkit-text-stroke: 1px var(--t-stroke-outline);
+}
+
+.container-edge {
+  padding-left: clamp(1.25rem, 4.5vw, 4.5rem);
+  padding-right: clamp(1.25rem, 4.5vw, 4.5rem);
+}
+
+/* Animated underline for links */
+.link-underline {
+  position: relative;
+  display: inline-block;
+}
+.link-underline::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 100%;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.45s var(--ease-out-expo);
+}
+.link-underline:hover::after,
+.link-underline:focus-visible::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+/* ---------------------------------- */
+/* Lenis smooth scroll                */
+/* ---------------------------------- */
+
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+/* ---------------------------------- */
+/* Reduced motion                     */
+/* ---------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Skip link */
+.skip-link {
+  position: fixed;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 200;
+  transform: translateY(-200%);
+  background: var(--t-accent-fill);
+  color: #0a0a0a;
+  padding: 0.5rem 1rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: transform 0.3s var(--ease-out-expo);
+}
+.skip-link:focus-visible {
+  transform: translateY(0);
+}
