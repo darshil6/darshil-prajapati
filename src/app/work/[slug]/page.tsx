@@ -41,8 +41,29 @@ export default async function CaseStudyPage({ params }: CaseStudyPageProps) {
   const project = getProject(slug);
   if (!project) notFound();
 
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    name: project.title,
+    description: project.oneLiner,
+    applicationCategory: "BusinessApplication",
+    operatingSystem: "Web",
+    author: {
+      "@type": "Person",
+      name: site.personal.name,
+      url: siteUrl,
+    },
+    keywords: project.tags.join(", "),
+    url: `${siteUrl}/work/${slug}`,
+  };
+
   return (
     <main id="main" className="relative z-10">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <CaseStudy project={project} next={getNextProject(slug)!} />
     </main>
   );
