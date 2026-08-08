@@ -54,7 +54,7 @@ export default async function CaseStudyPage({ params }: CaseStudyPageProps) {
       name: site.personal.name,
       url: siteUrl,
     },
-    keywords: project.tags.join(", "),
+    keywords: project.stack.join(", "),
     url: `${siteUrl}/work/${slug}`,
   };
 
