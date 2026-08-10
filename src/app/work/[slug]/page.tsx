@@ -41,7 +41,7 @@ export default async function CaseStudyPage({ params }: CaseStudyPageProps) {
   const project = getProject(slug);
   if (!project) notFound();
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://darshil-prajapati-6afc.vercel.app";
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",

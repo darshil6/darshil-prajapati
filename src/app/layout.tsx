@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Manrope, Instrument_Serif, JetBrains_Mono } from "next/font/google";
+import Script from "next/script";
 import { Analytics } from "@vercel/analytics/next";
 import { site } from "@/data/site";
 import AppProviders from "@/components/providers/app-providers";
@@ -164,6 +165,20 @@ export default function RootLayout({
           <EasterEggs />
         </AppProviders>
         <CustomCursor />
+        {/* Google Analytics (gtag.js) */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-M7JDZG81ZV"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-M7JDZG81ZV');
+          `}
+        </Script>
         <Analytics />
       </body>
     </html>
