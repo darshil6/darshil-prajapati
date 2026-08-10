@@ -2,7 +2,8 @@ import type { MetadataRoute } from "next";
 import { site } from "@/data/site";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const base = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+  const base =
+    process.env.NEXT_PUBLIC_SITE_URL ?? "https://darshil-prajapati-6afc.vercel.app";
   const lastModified = new Date();
   return [
     { url: base, lastModified, changeFrequency: "monthly", priority: 1 },
