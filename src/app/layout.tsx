@@ -79,6 +79,9 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
+  verification: {
+    google: "google23c577101253b410",
+  },
 };
 
 /** Structured data: Person + WebSite (schema.org, rendered as JSON-LD). */
