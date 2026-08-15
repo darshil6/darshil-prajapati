@@ -1,4 +1,4 @@
-name: Build and Push Docker Image
+name: Build, Push and Deploy
 
 on:
   push:
@@ -12,38 +12,99 @@ permissions:
 env:
   AWS_REGION: us-east-1
   ECR_REPOSITORY: portfolio
+  EKS_CLUSTER_NAME: unique-country-unicorn
+  DEPLOYMENT_NAME: darshil-portfolio
+  CONTAINER_NAME: darshil-portfolio
 
 jobs:
-  build-and-push:
+  build-push-deploy:
     runs-on: ubuntu-latest
 
     steps:
 
+      # --------------------------------
+      # 1. Checkout source code
+      # --------------------------------
       - name: Checkout code
         uses: actions/checkout@v4
-      - name: Check GitHub OIDC
-        run: |
-          echo "Repository: $GITHUB_REPOSITORY"
-          echo "Branch: $GITHUB_REF"
-          echo "Event: $GITHUB_EVENT_NAME"
 
+      # --------------------------------
+      # 2. Configure AWS using OIDC
+      # --------------------------------
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v6
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: ${{ env.AWS_REGION }}
 
+      # --------------------------------
+      # 3. Verify AWS identity
+      # --------------------------------
+      - name: Verify AWS identity
+        run: |
+          aws sts get-caller-identity
+
+      # --------------------------------
+      # 4. Login to ECR
+      # --------------------------------
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
+      # --------------------------------
+      # 5. Build Docker image
+      # --------------------------------
       - name: Build Docker image
         run: |
           docker build \
             -t ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ github.sha }} \
             .
 
+      # --------------------------------
+      # 6. Push Docker image to ECR
+      # --------------------------------
       - name: Push Docker image
         run: |
           docker push \
             ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ github.sha }}
+
+      # --------------------------------
+      # 7. Configure kubectl for EKS
+      # --------------------------------
+      - name: Update kubeconfig
+        run: |
+          aws eks update-kubeconfig \
+            --region ${{ env.AWS_REGION }} \
+            --name ${{ env.EKS_CLUSTER_NAME }}
+
+      # --------------------------------
+      # 8. Verify EKS connection
+      # --------------------------------
+      - name: Check Kubernetes cluster
+        run: |
+          kubectl get nodes
+
+      # --------------------------------
+      # 9. Update deployment image
+      # --------------------------------
+      - name: Deploy to EKS
+        run: |
+          kubectl set image deployment/${{ env.DEPLOYMENT_NAME }} \
+            ${{ env.CONTAINER_NAME }}=${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ github.sha }}
+
+      # --------------------------------
+      # 10. Wait for rolling deployment
+      # --------------------------------
+      - name: Wait for deployment
+        run: |
+          kubectl rollout status deployment/${{ env.DEPLOYMENT_NAME }} \
+            --timeout=180s
+
+      # --------------------------------
+      # 11. Show deployment status
+      # --------------------------------
+      - name: Deployment status
+        run: |
+          kubectl get deployment
+          kubectl get pods
+          kubectl get service
