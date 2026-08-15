@@ -4,8 +4,12 @@ kind: Service
 metadata:
   name: darshil-portfolio-service
 
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-scheme: "internet-facing"
+
 spec:
   type: LoadBalancer
+
   loadBalancerClass: eks.amazonaws.com/nlb
 
   selector:
