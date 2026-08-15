@@ -6,6 +6,7 @@ metadata:
 
 spec:
   type: LoadBalancer
+  loadBalancerClass: eks.amazonaws.com/nlb
 
   selector:
     app: darshil-portfolio
